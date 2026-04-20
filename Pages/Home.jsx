@@ -84,9 +84,13 @@ const Home = () => {
       const response = await api.get(`/booking/user/${storedUser._id}`);
       const formattedBookings = (response.data || []).map(mapBackendBooking);
       setBookings(formattedBookings);
-    } catch {
+    } catch (err) {
       setBookings([]);
-      setBookingsError("We could not load your booking history right now.");
+      setBookingsError(
+        err.code === "ERR_NETWORK"
+          ? "Backend server is not running, so booking history is unavailable right now."
+          : err.response?.data?.message || "We could not load your booking history right now."
+      );
     } finally {
       setBookingsLoading(false);
     }
